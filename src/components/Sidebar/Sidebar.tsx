@@ -8,19 +8,25 @@ import {
   Box,
   Divider,
   ListItemButton,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import { AccountBalance, Dashboard, Paid } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { ItemProps, SidebarItems } from './components';
 
 const drawerWidth = 240;
 
-interface ItemProps {
-  text: string;
-  icon: JSX.Element;
-  href: string;
-}
-
-export const Sidebar = ({ sidebarOpen }: { sidebarOpen: boolean }) => {
+export const Sidebar = ({
+  sidebarOpen,
+  toggleSidebar,
+}: {
+  sidebarOpen: boolean;
+  toggleSidebar: () => void;
+}) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const navigate = useNavigate();
   const items: ItemProps[] = [
     {
@@ -42,6 +48,13 @@ export const Sidebar = ({ sidebarOpen }: { sidebarOpen: boolean }) => {
 
   const handleNavigation = (href: string) => {
     navigate(href);
+    if (isMobile) {
+      toggleSidebar();
+    }
+  };
+
+  const handleBackDropClick = () => {
+    toggleSidebar();
   };
 
   return (
@@ -68,48 +81,24 @@ export const Sidebar = ({ sidebarOpen }: { sidebarOpen: boolean }) => {
       >
         <Toolbar />
         <Box>
-          <List>
-            {items.map((item, index) => (
-              <ListItem
-                key={index}
-                onClick={() => handleNavigation(item.href)}
-                disablePadding
-              >
-                <ListItemButton
-                  sx={{
-                    borderRadius: 1,
-                  }}
-                >
-                  <Box
-                    sx={{
-                      flexGrow: 1,
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        flexGrow: 1,
-                      }}
-                    >
-                      <ListItemText primary={item.text} />
-
-                      <ListItemIcon
-                        sx={{
-                          justifyContent: 'flex-end',
-                        }}
-                      >
-                        {item.icon}
-                      </ListItemIcon>
-                    </Box>
-                    <Divider />
-                  </Box>
-                </ListItemButton>
-              </ListItem>
-            ))}
-          </List>
+          <SidebarItems items={items} handleNavigation={handleNavigation} />
         </Box>
       </Drawer>
+
+      {isMobile && sidebarOpen && (
+        <Box
+          sx={{
+            position: 'fixed',
+            bottom: 0,
+            left: 0,
+            width: '100%',
+            height: '100vh',
+            zIndex: 1,
+            bgcolor: 'rgba(0,0,0,0.5)',
+          }}
+          onClick={handleBackDropClick}
+        />
+      )}
     </Box>
   );
 };

@@ -9,6 +9,14 @@ export default defineConfig({
     alias: {
       theme: path.resolve('src/theme'),
       components: path.resolve('src/components'),
+      pages: path.resolve('src/pages'),
+      router: path.resolve('src/router'),
+      models: path.resolve('src/models'),
+      utils: path.resolve('src/utils'),
+      hooks: path.resolve('src/hooks'),
+      persist: path.resolve('src/persist'),
+      store: path.resolve('src/persist/store'),
+      slices: path.resolve('src/persist/slices'),
     },
   },
 });

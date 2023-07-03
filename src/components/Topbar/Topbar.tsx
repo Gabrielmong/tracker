@@ -3,17 +3,33 @@ import {
   Toolbar,
   Container,
   IconButton,
+  Button,
   Box,
   Typography,
-  Button,
 } from '@mui/material';
-import { AccountCircle } from '@mui/icons-material';
+import { AccountCircle, Menu, MenuOpen } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from 'hooks';
 
-export const Topbar = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
+export const Topbar = ({
+  toggleSidebar,
+  sidebarOpen,
+}: {
+  toggleSidebar: () => void;
+  sidebarOpen: boolean;
+}) => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleMenu = () => {
+    navigate('/profile');
+  };
+
   return (
     <AppBar
       position="fixed"
       sx={{
+        height: '64px',
         zIndex: (theme) => theme.zIndex.drawer + 1,
       }}
     >
@@ -32,18 +48,33 @@ export const Topbar = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
           }}
           disableGutters
         >
-          <Button
+          <IconButton
+            size="medium"
+            edge="start"
             color="inherit"
             aria-label="open drawer"
-            onClick={toggleSidebar}
             sx={{
-              textTransform: 'none',
+              mr: 2,
+            }}
+            onClick={toggleSidebar}
+          >
+            {sidebarOpen ? <MenuOpen /> : <Menu />}
+          </IconButton>
+
+          <Typography
+            variant="h6"
+            component="div"
+            sx={{
+              '&:hover': {
+                cursor: 'pointer',
+              },
+            }}
+            onClick={() => {
+              navigate('/');
             }}
           >
-            <Typography variant="h6" component="div">
-              Tracker
-            </Typography>
-          </Button>
+            Tracker
+          </Typography>
         </Toolbar>
 
         <Box
@@ -52,17 +83,25 @@ export const Topbar = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
             alignItems: 'center',
           }}
         >
-          <IconButton
-            size="large"
-            edge="end"
-            aria-label="account of current user"
-            aria-controls="menu-appbar"
-            aria-haspopup="true"
-            // onClick={handleMenu}
+          <Button
+            variant="text"
+            sx={{
+              textTransform: 'none',
+            }}
+            onClick={handleMenu}
             color="inherit"
           >
+            <Typography
+              variant="body1"
+              sx={{
+                mr: 1,
+                textTransform: 'none',
+              }}
+            >
+              {user?.name}
+            </Typography>
             <AccountCircle />
-          </IconButton>
+          </Button>
         </Box>
       </Container>
     </AppBar>

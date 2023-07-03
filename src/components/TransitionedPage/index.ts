@@ -1,0 +1,1 @@
+export { TransitionedPage } from './TransitionedPage';
