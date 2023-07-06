@@ -22,6 +22,13 @@ const lightThemeSpec = createTheme({
         },
       },
     },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          borderRadius: '1.2rem',
+        },
+      },
+    },
   },
   palette: {
     mode: 'light',
@@ -30,6 +37,7 @@ const lightThemeSpec = createTheme({
     },
     secondary: {
       main: '#123d61',
+      contrastText: '#c9c9c9',
     },
     background: {
       default: '#ededed',
@@ -63,6 +71,13 @@ const darkThemeSpec = createTheme({
         },
       },
     },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          borderRadius: '1.2rem',
+        },
+      },
+    },
   },
   palette: {
     mode: 'dark',
@@ -71,6 +86,7 @@ const darkThemeSpec = createTheme({
     },
     secondary: {
       main: '#474747',
+      contrastText: '#949494',
     },
     background: {
       default: '#121212',

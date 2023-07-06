@@ -1,0 +1,1 @@
+export { MastercardLogo } from './Mastercard';

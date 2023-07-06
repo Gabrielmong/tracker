@@ -12,10 +12,12 @@ import {
 } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import authReducer from '../slices/authSlice';
+import settingsReducer from '../slices/settingsSlice';
 
 // Combine reducers
 const rootReducer = combineReducers({
   auth: authReducer,
+  settings: settingsReducer,
 });
 
 // Configure persistence

@@ -18,7 +18,7 @@ export const AccountDetails = ({ account }: { account: Account }) => {
 
   const handleCopyToClipboard = () => {
     navigator.clipboard.writeText(account.accountNumber);
-    toast('Copied to clipboard');
+    toast.success('Copied to clipboard');
   };
 
   const handleDelete = () => {

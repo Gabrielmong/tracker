@@ -17,6 +17,7 @@ export default defineConfig({
       persist: path.resolve('src/persist'),
       store: path.resolve('src/persist/store'),
       slices: path.resolve('src/persist/slices'),
+      assets: path.resolve('src/assets'),
     },
   },
 });

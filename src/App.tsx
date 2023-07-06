@@ -1,14 +1,12 @@
 import { CssBaseline } from '@mui/material';
 import { ThemeProvider } from '@mui/material/styles';
 import { Content, Sidebar, Topbar } from 'components';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { lightTheme, darkTheme } from 'theme';
-import { useSelector } from 'react-redux';
-import { selectUser } from 'persist';
-import { setUser } from 'persist';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectSettings, setUser, toggleSidebar, setTheme } from 'persist';
 import { User } from 'models';
-import { useDispatch } from 'react-redux';
 import { Toaster } from 'react-hot-toast';
 
 const mockProfile: User = {
@@ -22,8 +20,7 @@ const mockProfile: User = {
 };
 
 function App() {
-  const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>('dark');
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { currentTheme, sidebarOpen } = useSelector(selectSettings);
   const dispatch = useDispatch();
 
   const theme = useMemo(() => {
@@ -31,31 +28,15 @@ function App() {
   }, [currentTheme]);
 
   useEffect(() => {
-    const theme = localStorage.getItem('theme');
-    const sidebarOpen = localStorage.getItem('sidebarOpen');
-    if (theme) {
-      setCurrentTheme(theme as 'dark' | 'light');
-    } else {
-      localStorage.setItem('theme', 'dark');
-    }
-
-    if (sidebarOpen) {
-      setSidebarOpen(sidebarOpen === 'true');
-    } else {
-      localStorage.setItem('sidebarOpen', 'false');
-    }
     dispatch(setUser(mockProfile));
-  }, []);
+  }, [dispatch]);
 
   const toggleTheme = () => {
-    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-    setCurrentTheme(newTheme);
-    localStorage.setItem('theme', newTheme);
+    dispatch(setTheme(currentTheme === 'light' ? 'dark' : 'light'));
   };
 
-  const toggleSidebar = () => {
-    localStorage.setItem('sidebarOpen', sidebarOpen ? 'false' : 'true');
-    setSidebarOpen(!sidebarOpen);
+  const toggleSidebarAction = () => {
+    dispatch(toggleSidebar());
   };
 
   return (
@@ -72,9 +53,12 @@ function App() {
         }}
       />
       <BrowserRouter basename="/">
-        <Topbar toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
+        <Topbar toggleSidebar={toggleSidebarAction} sidebarOpen={sidebarOpen} />
 
-        <Sidebar sidebarOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
+        <Sidebar
+          sidebarOpen={sidebarOpen}
+          toggleSidebar={toggleSidebarAction}
+        />
 
         <Content
           sidebarOpen={sidebarOpen}
