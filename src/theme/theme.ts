@@ -83,6 +83,7 @@ const darkThemeSpec = createTheme({
     mode: 'dark',
     primary: {
       main: '#dddddd',
+      dark: '#292929',
     },
     secondary: {
       main: '#474747',

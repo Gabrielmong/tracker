@@ -1,9 +1,11 @@
 export type Account = {
-  accountName: string;
-  accountNumber: string;
+  name: string;
+  number: string;
   bank: string;
   type: string;
   currency: string;
-  availableBalance: number;
-  createdAt: Date;
+  balance: number;
+  createdAt: string;
+  updatedAt: string;
+  id: string;
 };

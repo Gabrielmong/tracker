@@ -6,9 +6,9 @@ const initialState: User = {
   name: '',
   email: '',
   token: '',
-  createdAt: '',
-  updatedAt: '',
-  currentTheme: 'light',
+  lastName: '',
+  createdAt: new Date(),
+  updatedAt: new Date(),
   password: '',
 };
 
@@ -23,18 +23,18 @@ const authSlice = createSlice({
       state.token = action.payload.token;
       state.createdAt = action.payload.createdAt;
       state.updatedAt = action.payload.updatedAt;
-      state.currentTheme = action.payload.currentTheme;
       state.password = action.payload.password;
+      state.lastName = action.payload.lastName;
     },
     logOut: (state) => {
       state.id = '';
       state.name = '';
       state.email = '';
       state.token = '';
-      state.createdAt = '';
-      state.updatedAt = '';
-      state.currentTheme = 'light';
+      state.createdAt = new Date();
+      state.updatedAt = new Date();
       state.password = '';
+      state.lastName = '';
     },
   },
 });

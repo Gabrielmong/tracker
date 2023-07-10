@@ -7,3 +7,4 @@ export * from './Account';
 export * from './Profile';
 export * from './TransitionedPage';
 export * from './Dashboard';
+export * from './Transactions';

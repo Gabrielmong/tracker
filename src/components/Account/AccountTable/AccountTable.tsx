@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import { Account } from 'models';
 import { useState } from 'react';
-import { formatNumber } from 'utils';
+import { formatCurrency, formatNumber } from 'utils';
 
 export const AccountTable = ({
   accounts,
@@ -49,9 +49,9 @@ export const AccountTable = ({
         </TableHead>
 
         <TableBody>
-          {accounts.map((account) => (
+          {accounts?.map((account) => (
             <TableRow
-              key={account.accountNumber}
+              key={account?.id}
               sx={{
                 '&:last-child td, &:last-child th': { border: 0 },
                 '&:hover': {
@@ -59,7 +59,7 @@ export const AccountTable = ({
                   cursor: 'pointer',
                 },
                 backgroundColor:
-                  selectedAccount?.accountNumber === account.accountNumber
+                  selectedAccount?.number === account?.number
                     ? currentTheme === 'light'
                       ? 'background.default'
                       : 'background.paper'
@@ -67,16 +67,16 @@ export const AccountTable = ({
               }}
               onClick={() => handleAccountClick(account)}
             >
-              <TableCell>{account.accountName}</TableCell>
-              <TableCell>$ {formatNumber(account.availableBalance)}</TableCell>
-              <TableCell>{account.bank}</TableCell>
+              <TableCell>{account?.name}</TableCell>
+              <TableCell>
+                {formatCurrency(account?.balance, account.currency)}
+              </TableCell>
+              <TableCell>{account?.bank}</TableCell>
 
               {!isMobile && (
                 <>
-                  <TableCell>{account.accountNumber}</TableCell>
-                  <TableCell>
-                    {account.createdAt.toLocaleDateString()}
-                  </TableCell>
+                  <TableCell>{account?.number}</TableCell>
+                  <TableCell>{account?.createdAt}</TableCell>
                 </>
               )}
             </TableRow>

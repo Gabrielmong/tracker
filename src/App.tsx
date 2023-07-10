@@ -10,12 +10,12 @@ import { User } from 'models';
 import { Toaster } from 'react-hot-toast';
 
 const mockProfile: User = {
-  id: '5ce68e8e-671d-40f0-a569-ba79e196b2b8',
-  name: 'Gabriel Monge',
-  email: 'johndoe@email.com',
-  createdAt: new Date().toLocaleDateString(),
-  updatedAt: new Date().toLocaleDateString(),
-  currentTheme: 'light',
+  id: 'b2998342-b128-4d0d-a7d3-5f4a16531ac4',
+  name: 'Gabriel',
+  lastName: 'Monge',
+  email: 'gabriel.monge.lizano@gmail.com',
+  createdAt: new Date('1688951753847'),
+  updatedAt: new Date('1688951753847'),
   token: '123',
 };
 

@@ -11,6 +11,7 @@
     "prettier": "prettier --write ."
   },
   "dependencies": {
+    "@apollo/client": "^3.7.17",
     "@emotion/react": "11.11.1",
     "@emotion/styled": "11.11.0",
     "@mui/icons-material": "^5.11.16",
@@ -19,6 +20,8 @@
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",
     "framer-motion": "^10.12.18",
+    "graphql": "^16.7.1",
+    "graphql-ws": "^5.14.0",
     "path": "0.12.7",
     "prettier": "^2.8.8",
     "react": "18.2.0",

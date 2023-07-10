@@ -75,7 +75,7 @@ export const TopGrid = () => {
                 flexDirection: 'column',
                 justifyContent: 'space-between',
                 height: '100%',
-                padding: 3,
+                padding: 2,
               }}
             >
               <Box
@@ -85,7 +85,7 @@ export const TopGrid = () => {
                   alignItems: 'flex-start',
                   justifyContent: 'flex-end',
                   height: '100%',
-                  paddingBottom: 3,
+                  paddingY: 3,
                 }}
               >
                 <Typography variant="body2">Available balance</Typography>
@@ -103,7 +103,7 @@ export const TopGrid = () => {
               >
                 <Typography variant="body2">**** xxxx</Typography>
 
-                <MastercardLogo height={50} width={80} />
+                <MastercardLogo height={50} width={70} />
               </Box>
             </Box>
           </Card>

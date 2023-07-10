@@ -18,6 +18,7 @@ export default defineConfig({
       store: path.resolve('src/persist/store'),
       slices: path.resolve('src/persist/slices'),
       assets: path.resolve('src/assets'),
+      api: path.resolve('src/api'),
     },
   },
 });

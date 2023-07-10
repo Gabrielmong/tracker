@@ -9,42 +9,53 @@ import {
 } from '@mui/material';
 import { AccountDetails, AccountTable, TransitionedPage } from 'components';
 import { Account } from 'models';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-
-export const mockAccounts: Account[] = [
-  {
-    accountName: 'Checking',
-    accountNumber: '12343256789',
-    bank: 'Bank of America',
-    type: 'Checking',
-    currency: 'USD',
-    availableBalance: 1000,
-    createdAt: new Date(),
-  },
-  {
-    accountName: 'Savings',
-    accountNumber: '987654321',
-    bank: 'Bank of America',
-    type: 'Savings',
-    currency: 'USD',
-    availableBalance: 10000,
-    createdAt: new Date(),
-  },
-  {
-    accountName: 'Checking',
-    accountNumber: '12345126789',
-    bank: 'Bank of America',
-    type: 'Checking',
-    currency: 'USD',
-    availableBalance: 1000,
-    createdAt: new Date(),
-  },
-];
+import { useAuth } from 'hooks';
+import { useQuery, useSubscription } from '@apollo/client';
+import { GET_ACCOUNTS, ACCOUNT_ADDED, ACCOUNT_DELETED } from 'api';
 
 export const Accounts = () => {
-  const [accounts, setAccounts] = useState<Account[]>(mockAccounts);
+  const { user } = useAuth();
+  const [accounts, setAccounts] = useState<Account[]>([]);
   const [selectedAccount, setSelectedAccount] = useState<Account | null>(null);
+
+  const { data: accountAddedData } = useSubscription(ACCOUNT_ADDED, {
+    variables: { userId: user.id },
+  });
+
+  const { data: accountDeletedData } = useSubscription(ACCOUNT_DELETED, {
+    variables: { userId: user.id },
+  });
+
+  const { loading, error, data } = useQuery(GET_ACCOUNTS, {
+    variables: { userId: user.id },
+  });
+
+  useEffect(() => {
+    if (data) {
+      setAccounts(data.accounts);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (accountAddedData) {
+      setAccounts((prevAccounts) => [
+        ...prevAccounts,
+        accountAddedData.accountAdded,
+      ]);
+    }
+  }, [accountAddedData]);
+
+  useEffect(() => {
+    if (accountDeletedData) {
+      setAccounts((prevAccounts) =>
+        prevAccounts.filter(
+          (account) => account.id !== accountDeletedData.accountDeleted.id,
+        ),
+      );
+    }
+  }, [accountDeletedData]);
 
   const handleAccountClick = (account: Account) => {
     setSelectedAccount(account);
@@ -81,11 +92,21 @@ export const Accounts = () => {
                 </Button>
               </Box>
 
-              <AccountTable
-                accounts={accounts}
-                handleAccountClick={handleAccountClick}
-                selectedAccount={selectedAccount}
-              />
+              {loading ? (
+                <Typography variant="body1">Loading...</Typography>
+              ) : error ? (
+                <Typography variant="body1">Error loading accounts</Typography>
+              ) : (
+                <>
+                  {accounts && (
+                    <AccountTable
+                      accounts={accounts}
+                      handleAccountClick={handleAccountClick}
+                      selectedAccount={selectedAccount}
+                    />
+                  )}
+                </>
+              )}
             </CardContent>
           </Card>
         </Grid>

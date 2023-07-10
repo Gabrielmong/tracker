@@ -29,7 +29,6 @@ export const Topbar = ({
     <AppBar
       position="fixed"
       sx={{
-        height: '64px',
         zIndex: (theme) => theme.zIndex.drawer + 1,
       }}
     >

@@ -8,7 +8,7 @@ import {
 import { Account } from 'models';
 import { motion, useAnimation } from 'framer-motion';
 import { useEffect, useRef } from 'react';
-import { formatNumber } from 'utils';
+import { formatCurrency, formatNumber } from 'utils';
 import { ContentCopy, Delete, Edit, Summarize } from '@mui/icons-material';
 import toast from 'react-hot-toast';
 
@@ -17,7 +17,7 @@ export const AccountDetails = ({ account }: { account: Account }) => {
   const ref = useRef(null);
 
   const handleCopyToClipboard = () => {
-    navigator.clipboard.writeText(account.accountNumber);
+    navigator.clipboard.writeText(account.number);
     toast.success('Copied to clipboard');
   };
 
@@ -63,9 +63,9 @@ export const AccountDetails = ({ account }: { account: Account }) => {
             justifyContent: 'space-between',
           }}
         >
-          <Typography variant="h4">{account.accountName}</Typography>
+          <Typography variant="h4">{account.name}</Typography>
           <Typography variant="h4">
-            $ {formatNumber(account.availableBalance)}
+            {formatCurrency(account?.balance, account.currency)}
           </Typography>
         </Box>
 
@@ -88,7 +88,7 @@ export const AccountDetails = ({ account }: { account: Account }) => {
               },
             }}
           >
-            {account.accountNumber} <ContentCopy fontSize="inherit" />
+            {account.number} <ContentCopy fontSize="inherit" />
           </Typography>
           <Typography variant="body2">{account.currency}</Typography>
         </Box>
