@@ -15,7 +15,20 @@ export const getCurrecySymbol = (currency: string) => {
   }
 };
 
-export const formatCurrency = (amount: number, currency: string) => {
+export const formatCurrency = (
+  amount: number | undefined,
+  currency: string | undefined,
+) => {
+  if (!amount || !currency) {
+    return '';
+  }
+
   const symbol = getCurrecySymbol(currency);
   return `${symbol} ${formatNumber(amount)}`;
+};
+
+export const getColor = (amount: number) => {
+  if (amount > 0) return '#32925E';
+  if (amount < 0) return '#C22929';
+  return 'black';
 };

@@ -7,18 +7,26 @@ import {
   Typography,
   useTheme,
   useMediaQuery,
+  Box,
+  Card,
+  CardContent,
+  Grid,
+  CircularProgress,
 } from '@mui/material';
 import { useBreakpoint } from 'hooks';
 import { Transaction } from 'models';
+import { formatCurrency, getColor } from 'utils';
 
 export const TransactionsTable = ({
   transactions,
   handleTransactionClick,
   selectedTransaction,
+  loading,
 }: {
   transactions: Transaction[];
   handleTransactionClick: (transaction: Transaction) => void;
   selectedTransaction: Transaction | null;
+  loading: boolean;
 }) => {
   const width = useBreakpoint();
   const theme = useTheme();
@@ -81,93 +89,144 @@ export const TransactionsTable = ({
   };
 
   return (
-    <TableContainer>
-      <Table>
-        <TableBody>
-          {transactions.map((transaction, index) => (
-            <TableRow
+    <Grid
+      item
+      xs={12}
+      md={7}
+      sx={{
+        minHeight: '100%',
+      }}
+    >
+      <Card
+        sx={{
+          minHeight: '100%',
+        }}
+      >
+        <CardContent>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
+            <Typography variant="h6" component="div">
+              Transactions
+            </Typography>
+
+            <Typography variant="body2" component="div">
+              Page 1 of 10
+            </Typography>
+          </Box>
+
+          {loading ? (
+            <CardContent
               sx={{
-                '&:hover': {
-                  backgroundColor: 'background.default',
-                  cursor: 'pointer',
-                },
-                backgroundColor:
-                  selectedTransaction?.id === transaction.id
-                    ? currentTheme === 'light'
-                      ? 'background.default'
-                      : 'background.paper'
-                    : 'transparent',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100%',
               }}
-              key={transaction.id}
-              onClick={() => handleTransactionClick(transaction)}
             >
-              <TableCell
-                sx={{
-                  borderBottom: 'none',
-                  width: getCellWidth(0),
-                  padding: '5px',
-                  borderRadius: '15px 0 0 15px',
-                }}
-              >
-                <Typography variant="h6" component="div">
-                  {transaction.id.slice(0, 4)}
-                </Typography>
-              </TableCell>
-              <TableCell
-                sx={{
-                  borderBottom: 'none',
-                  width: getCellWidth(1),
-                  padding: '5px',
-                }}
-              >
-                <Typography variant="h6" component="div">
-                  {transaction.title}
-                </Typography>
-              </TableCell>
-              <TableCell
-                sx={{
-                  borderBottom: 'none',
-                  width: getCellWidth(2),
-                  padding: '5px',
+              <CircularProgress />
+            </CardContent>
+          ) : (
+            <TableContainer>
+              <Table>
+                <TableBody>
+                  {transactions.map((transaction, index) => (
+                    <TableRow
+                      sx={{
+                        '&:hover': {
+                          backgroundColor: 'background.default',
+                          cursor: 'pointer',
+                        },
+                        backgroundColor:
+                          selectedTransaction?.id === transaction.id
+                            ? currentTheme === 'light'
+                              ? 'background.default'
+                              : 'background.paper'
+                            : 'transparent',
+                      }}
+                      key={transaction.id}
+                      onClick={() => handleTransactionClick(transaction)}
+                    >
+                      <TableCell
+                        sx={{
+                          borderBottom: 'none',
+                          width: getCellWidth(0),
+                          padding: '5px',
+                          borderRadius: '15px 0 0 15px',
+                        }}
+                      >
+                        <Typography variant="h6" component="div">
+                          {transaction.id.slice(0, 4)}
+                        </Typography>
+                      </TableCell>
+                      <TableCell
+                        sx={{
+                          borderBottom: 'none',
+                          width: getCellWidth(1),
+                          padding: '5px',
+                        }}
+                      >
+                        <Typography variant="h6" component="div">
+                          {transaction.title}
+                        </Typography>
+                      </TableCell>
+                      <TableCell
+                        sx={{
+                          borderBottom: 'none',
+                          width: getCellWidth(2),
+                          padding: '5px',
 
-                  borderRadius: isSmall ? '0 15px 15px 0' : null,
-                }}
-              >
-                <Typography
-                  variant="h6"
-                  component="div"
-                  sx={{
-                    textAlign: 'right',
-                  }}
-                >
-                  {transaction.amount}
-                </Typography>
-              </TableCell>
-              {!isSmall && (
-                <TableCell
-                  sx={{
-                    borderBottom: 'none',
-                    width: getCellWidth(3),
-                    padding: '5px',
+                          borderRadius: isSmall ? '0 15px 15px 0' : null,
+                        }}
+                      >
+                        <Typography
+                          variant="h6"
+                          component="div"
+                          sx={{
+                            textAlign: 'right',
+                            color: getColor(transaction.amount),
+                          }}
+                        >
+                          {formatCurrency(
+                            transaction?.amount,
+                            transaction?.account?.currency,
+                          )}
+                        </Typography>
+                      </TableCell>
+                      {!isSmall && (
+                        <TableCell
+                          sx={{
+                            borderBottom: 'none',
+                            width: getCellWidth(3),
+                            padding: '5px',
 
-                    borderRadius: '0 15px 15px 0',
-                  }}
-                >
-                  <Typography
-                    variant="h6"
-                    component="div"
-                    sx={{
-                      textAlign: 'right',
-                    }}
-                  >
-                    {transaction.date.toLocaleDateString()}
-                  </Typography>
-                </TableCell>
-              )}
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+                            borderRadius: '0 15px 15px 0',
+                          }}
+                        >
+                          <Typography
+                            variant="h6"
+                            component="div"
+                            sx={{
+                              textAlign: 'right',
+                            }}
+                          >
+                            {transaction.date}
+                          </Typography>
+                        </TableCell>
+                      )}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
+        </CardContent>
+      </Card>
+    </Grid>
   );
 };

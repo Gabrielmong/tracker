@@ -1,28 +1,58 @@
 import {
+  Box,
+  Button,
+  CardActions,
   CardContent,
   Typography,
-  CardActions,
-  Button,
-  Box,
 } from '@mui/material';
+import toast from 'react-hot-toast';
 import { Account } from 'models';
+import { ContentCopy, Delete, Edit, Summarize } from '@mui/icons-material';
+import { DELETE_ACCOUNT } from 'api/accounts';
+import { formatCurrency } from 'utils';
 import { motion, useAnimation } from 'framer-motion';
 import { useEffect, useRef } from 'react';
-import { formatCurrency, formatNumber } from 'utils';
-import { ContentCopy, Delete, Edit, Summarize } from '@mui/icons-material';
-import toast from 'react-hot-toast';
+import { useMutation } from '@apollo/client';
 
-export const AccountDetails = ({ account }: { account: Account }) => {
+export const AccountDetails = ({
+  account,
+  handleVanishDetails,
+}: {
+  account: Account;
+  handleVanishDetails: () => void;
+}) => {
   const controls = useAnimation();
   const ref = useRef(null);
+
+  const [deleteAccount] = useMutation(DELETE_ACCOUNT);
 
   const handleCopyToClipboard = () => {
     navigator.clipboard.writeText(account.number);
     toast.success('Copied to clipboard');
   };
 
-  const handleDelete = () => {
-    toast('Not implemented yet', { icon: '🚧' });
+  const handleDelete = async () => {
+    try {
+      const { data } = await deleteAccount({
+        variables: { accountId: account.id },
+      });
+
+      if (data) {
+        toast.success('Account deleted');
+
+        controls
+          .start({
+            opacity: 0,
+            transition: { duration: 0.5 },
+          })
+          .then(() => {
+            handleVanishDetails();
+          });
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error('Error deleting account');
+    }
   };
 
   const handleEdit = () => {
@@ -102,8 +132,16 @@ export const AccountDetails = ({ account }: { account: Account }) => {
 
           <Typography variant="body2">{account.type}</Typography>
         </Box>
+
+        <Box>
+          <Typography variant="body2">{account.id}</Typography>
+        </Box>
       </CardContent>
-      <CardActions>
+      <CardActions
+        sx={{
+          padding: 2,
+        }}
+      >
         <Button
           sx={{
             backgroundColor: '#763C3C',

@@ -1,0 +1,1 @@
+export { TTransactionDetails } from './TTransactionDetails';

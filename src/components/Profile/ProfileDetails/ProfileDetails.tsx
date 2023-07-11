@@ -47,7 +47,7 @@ export const ProfileDetails = ({
       },
       {
         title: 'Joined',
-        value: profile.createdAt,
+        value: profile.createdAt.toDateString(),
       },
       {
         title: 'Your id',

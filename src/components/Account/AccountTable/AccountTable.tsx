@@ -11,6 +11,7 @@ import {
 import { Account } from 'models';
 import { useState } from 'react';
 import { formatCurrency, formatNumber } from 'utils';
+import { AccountTableRow } from './AccountTableRow';
 
 export const AccountTable = ({
   accounts,
@@ -23,8 +24,6 @@ export const AccountTable = ({
 }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-
-  const currentTheme = theme.palette.mode;
 
   return (
     <TableContainer
@@ -50,36 +49,12 @@ export const AccountTable = ({
 
         <TableBody>
           {accounts?.map((account) => (
-            <TableRow
+            <AccountTableRow
               key={account?.id}
-              sx={{
-                '&:last-child td, &:last-child th': { border: 0 },
-                '&:hover': {
-                  backgroundColor: 'background.default',
-                  cursor: 'pointer',
-                },
-                backgroundColor:
-                  selectedAccount?.number === account?.number
-                    ? currentTheme === 'light'
-                      ? 'background.default'
-                      : 'background.paper'
-                    : 'transparent',
-              }}
-              onClick={() => handleAccountClick(account)}
-            >
-              <TableCell>{account?.name}</TableCell>
-              <TableCell>
-                {formatCurrency(account?.balance, account.currency)}
-              </TableCell>
-              <TableCell>{account?.bank}</TableCell>
-
-              {!isMobile && (
-                <>
-                  <TableCell>{account?.number}</TableCell>
-                  <TableCell>{account?.createdAt}</TableCell>
-                </>
-              )}
-            </TableRow>
+              account={account}
+              handleAccountClick={handleAccountClick}
+              selectedAccount={selectedAccount}
+            />
           ))}
         </TableBody>
       </Table>

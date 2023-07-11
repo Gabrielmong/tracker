@@ -4,6 +4,7 @@ import {
   Card,
   CardContent,
   CardHeader,
+  CircularProgress,
   Grid,
   Typography,
 } from '@mui/material';
@@ -12,8 +13,14 @@ import { Account } from 'models';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useAuth } from 'hooks';
-import { useQuery, useSubscription } from '@apollo/client';
-import { GET_ACCOUNTS, ACCOUNT_ADDED, ACCOUNT_DELETED } from 'api';
+import { useQuery, useSubscription, useMutation } from '@apollo/client';
+import {
+  ACCOUNT_ADDED,
+  ACCOUNT_DELETED,
+  ACCOUNT_UPDATED,
+  CREATE_ACCOUNT,
+  GET_ACCOUNTS,
+} from 'api/accounts';
 
 export const Accounts = () => {
   const { user } = useAuth();
@@ -28,9 +35,19 @@ export const Accounts = () => {
     variables: { userId: user.id },
   });
 
-  const { loading, error, data } = useQuery(GET_ACCOUNTS, {
+  const { data: accountUpdatedData } = useSubscription(ACCOUNT_UPDATED, {
     variables: { userId: user.id },
   });
+
+  const { loading, error, data, refetch } = useQuery(GET_ACCOUNTS, {
+    variables: { userId: user.id },
+  });
+
+  const [createAccount] = useMutation(CREATE_ACCOUNT);
+
+  useEffect(() => {
+    refetch();
+  }, []);
 
   useEffect(() => {
     if (data) {
@@ -55,14 +72,48 @@ export const Accounts = () => {
         ),
       );
     }
-  }, [accountDeletedData]);
+  }, [accountDeletedData, selectedAccount]);
+
+  useEffect(() => {
+    if (accountUpdatedData) {
+      setAccounts((prevAccounts) =>
+        prevAccounts.map((account) =>
+          account.id === accountUpdatedData.accountUpdated.id
+            ? accountUpdatedData.accountUpdated
+            : account,
+        ),
+      );
+    }
+  }, [accountUpdatedData]);
 
   const handleAccountClick = (account: Account) => {
     setSelectedAccount(account);
   };
 
-  const handleAddAccount = () => {
-    toast('Not implemented yet', { icon: '🚧' });
+  const handleAddAccount = async () => {
+    try {
+      const { data } = await createAccount({
+        variables: {
+          balance: 0,
+          bank: 'BNCR',
+          currency: 'CRC',
+          name: 'New Account',
+          number: '123456789',
+          type: 'Checking',
+          userId: user.id,
+        },
+      });
+
+      if (data) {
+        toast.success('Account created successfully');
+      }
+    } catch (error) {
+      toast.error('Error creating account');
+    }
+  };
+
+  const handleVanishDetails = () => {
+    setSelectedAccount(null);
   };
 
   return (
@@ -93,7 +144,17 @@ export const Accounts = () => {
               </Box>
 
               {loading ? (
-                <Typography variant="body1">Loading...</Typography>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: 265,
+                  }}
+                >
+                  <CircularProgress />
+                </Box>
               ) : error ? (
                 <Typography variant="body1">Error loading accounts</Typography>
               ) : (
@@ -123,7 +184,10 @@ export const Accounts = () => {
             </CardHeader>
 
             {selectedAccount ? (
-              <AccountDetails account={selectedAccount} />
+              <AccountDetails
+                account={selectedAccount}
+                handleVanishDetails={handleVanishDetails}
+              />
             ) : (
               <CardContent
                 sx={{
@@ -143,7 +207,11 @@ export const Accounts = () => {
         </Grid>
 
         <Grid item xs={12} md={6} lg={5}>
-          <Card>
+          <Card
+            sx={{
+              height: '100%',
+            }}
+          >
             <CardHeader title="Pending" />
             <CardContent
               sx={{

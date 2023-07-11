@@ -2,16 +2,17 @@ import { Account } from './Account';
 import { User } from './User';
 
 export type Transaction = {
-  account?: Account;
+  account: Account;
   accountId: string;
   amount: number;
   category: string;
-  createdAt: Date;
-  date: Date;
+  createdAt: string;
+  date: string;
   description: string;
   id: string;
   title: string;
-  updatedAt: Date;
+  updatedAt: string;
+  sentTo?: string;
   user?: User;
   userId: string;
 };

@@ -32,3 +32,20 @@ export const ACCOUNT_DELETED = gql`
     }
   }
 `;
+
+export const ACCOUNT_UPDATED = gql`
+  subscription AccountUpdated($userId: String) {
+    accountUpdated(userId: $userId) {
+      balance
+      bank
+      createdAt
+      currency
+      id
+      name
+      number
+      type
+      updatedAt
+      userId
+    }
+  }
+`;
