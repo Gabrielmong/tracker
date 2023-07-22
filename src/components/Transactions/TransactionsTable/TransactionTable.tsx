@@ -12,21 +12,31 @@ import {
   CardContent,
   Grid,
   CircularProgress,
+  Pagination,
 } from '@mui/material';
 import { useBreakpoint } from 'hooks';
 import { Transaction } from 'models';
-import { formatCurrency, getColor } from 'utils';
+import { formatCurrency, formatDate, getColor } from 'utils';
 
 export const TransactionsTable = ({
+  handlePageChange,
   transactions,
   handleTransactionClick,
   selectedTransaction,
   loading,
+  pagination: { page, take, total, pages },
 }: {
   transactions: Transaction[];
   handleTransactionClick: (transaction: Transaction) => void;
   selectedTransaction: Transaction | null;
   loading: boolean;
+  handlePageChange: (page: number) => void;
+  pagination: {
+    page: number;
+    take: number;
+    total: number;
+    pages: number;
+  };
 }) => {
   const width = useBreakpoint();
   const theme = useTheme();
@@ -115,9 +125,16 @@ export const TransactionsTable = ({
               Transactions
             </Typography>
 
-            <Typography variant="body2" component="div">
-              Page 1 of 10
-            </Typography>
+            <Pagination
+              count={pages}
+              page={page}
+              onChange={(event, value) => handlePageChange(value)}
+              sx={{
+                '& .MuiPaginationItem-root': {
+                  color: 'white',
+                },
+              }}
+            />
           </Box>
 
           {loading ? (
@@ -215,7 +232,7 @@ export const TransactionsTable = ({
                               textAlign: 'right',
                             }}
                           >
-                            {transaction.date}
+                            {formatDate(transaction.date).toLocaleDateString()}
                           </Typography>
                         </TableCell>
                       )}

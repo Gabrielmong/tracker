@@ -9,7 +9,7 @@ import {
 import { motion, useAnimation } from 'framer-motion';
 import { Account, Transaction } from 'models';
 import { useEffect, useRef } from 'react';
-import { formatCurrency, getColor } from 'utils';
+import { formatCurrency, formatDate, getColor } from 'utils';
 import { useMutation } from '@apollo/client';
 import { DELETE_TRANSACTION } from 'api/transactions';
 import toast from 'react-hot-toast';
@@ -18,10 +18,12 @@ export const TTransactionDetails = ({
   selectedTransaction,
   selectedAccount,
   handleVanishDetails,
+  handleEditTransaction,
 }: {
   selectedTransaction: Transaction | null;
   selectedAccount: Account | undefined;
   handleVanishDetails: () => void;
+  handleEditTransaction: () => void;
 }) => {
   const controls = useAnimation();
   const ref = useRef(null);
@@ -105,7 +107,7 @@ export const TTransactionDetails = ({
         </Box>
 
         <Typography variant="body1" component="div">
-          {selectedTransaction?.createdAt}
+          {formatDate(selectedTransaction?.date || '').toLocaleDateString()}
         </Typography>
 
         <Box
@@ -171,6 +173,7 @@ export const TTransactionDetails = ({
             padding: 0,
             color: 'white',
           }}
+          onClick={handleEditTransaction}
         >
           <Edit color="inherit" />
         </Button>

@@ -9,6 +9,7 @@ import {
 import { Transaction } from 'models';
 import { useEffect, useState } from 'react';
 import {
+  GET_COUNT,
   CREATE_TRANSACTION,
   DELETE_TRANSACTION,
   GET_TRANSACTIONS,
@@ -19,12 +20,22 @@ import {
 import { useQuery, useSubscription, useMutation } from '@apollo/client';
 import { useAuth } from 'hooks';
 import { toast } from 'react-hot-toast';
+import { UpsertTransactionModal } from './components';
 
 export const Transactions = () => {
   const { user } = useAuth();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [selectedTransaction, setSelectedTransaction] =
     useState<Transaction | null>(null);
+  const [pagination, setPagination] = useState({
+    page: 1,
+    skip: 0,
+    take: 10,
+    total: 0,
+    pages: 0,
+  });
+  const [upsertModalOpen, setUpsertModalOpen] = useState(false);
+  const [create, setCreate] = useState(false);
 
   const { data: transactionAddedData } = useSubscription(TRANSACTION_ADDED, {
     variables: { userId: user.id },
@@ -45,14 +56,32 @@ export const Transactions = () => {
   );
 
   const { loading, error, data, refetch } = useQuery(GET_TRANSACTIONS, {
-    variables: { userId: user.id },
+    variables: {
+      userId: user.id,
+      skip: pagination.skip,
+      take: pagination.take,
+    },
   });
 
-  const [createTransaction] = useMutation(CREATE_TRANSACTION);
+  const { data: countData, refetch: refetchCount } = useQuery(GET_COUNT, {
+    variables: { userId: user.id },
+  });
 
   useEffect(() => {
     refetch();
   }, []);
+
+  useEffect(() => {
+    if (countData) {
+      const { transactionsCount } = countData;
+      const pages = Math.ceil(transactionsCount / pagination.take);
+      setPagination((prevPagination) => ({
+        ...prevPagination,
+        total: transactionsCount,
+        pages,
+      }));
+    }
+  }, [countData]);
 
   useEffect(() => {
     if (data) {
@@ -77,8 +106,9 @@ export const Transactions = () => {
             transaction.id !== transactionDeletedData.transactionDeleted.id,
         ),
       );
+      refetchCount();
     }
-  }, [transactionDeletedData]);
+  }, [refetchCount, transactionDeletedData]);
 
   useEffect(() => {
     if (transactionUpdatedData) {
@@ -99,33 +129,32 @@ export const Transactions = () => {
     setSelectedTransaction(transaction);
   };
 
-  const handleCreateTransaction = async () => {
-    try {
-      const { data } = await createTransaction({
-        variables: {
-          accountId: '82560a31-9f59-4e45-8fba-043b10732aad',
-          amount: -500,
-          category: 'Expenses',
-          date: '2021-10-10',
-          description: 'Test',
-          type: 'Expense',
-          title: 'Test',
-          userId: user.id,
-          sentTo: 'Test',
-        },
-      });
-
-      if (data) {
-        toast.success('Transaction created successfully');
-      }
-    } catch (error) {
-      console.log(error);
-      toast.error('Error creating transaction');
-    }
-  };
-
   const handleVanishDetails = () => {
     setSelectedTransaction(null);
+    refetch();
+    refetchCount();
+  };
+
+  const handlePageChange = (page: number) => {
+    setPagination((prevPagination) => ({
+      ...prevPagination,
+      page,
+      skip: (page - 1) * prevPagination.take,
+    }));
+  };
+
+  const handleCreate = () => {
+    setCreate(true);
+    setUpsertModalOpen(true);
+  };
+
+  const handleUpsertModalClose = () => {
+    setUpsertModalOpen(false);
+  };
+
+  const handleEditTransaction = () => {
+    setCreate(false);
+    setUpsertModalOpen(true);
   };
 
   return (
@@ -144,7 +173,7 @@ export const Transactions = () => {
               height: '100%',
               textTransform: 'none',
             }}
-            onClick={handleCreateTransaction}
+            onClick={handleCreate}
           >
             {isSmall ? <Add /> : 'Add new'}
           </Button>
@@ -154,13 +183,23 @@ export const Transactions = () => {
           selectedTransaction={selectedTransaction}
           selectedAccount={selectedTransaction?.account}
           handleVanishDetails={handleVanishDetails}
+          handleEditTransaction={handleEditTransaction}
         />
 
         <TransactionsTable
+          pagination={pagination}
+          handlePageChange={handlePageChange}
           transactions={transactions}
           handleTransactionClick={handleTransactionClick}
           selectedTransaction={selectedTransaction}
           loading={loading}
+        />
+
+        <UpsertTransactionModal
+          open={upsertModalOpen}
+          onClose={handleUpsertModalClose}
+          updateTransaction={selectedTransaction}
+          create={create}
         />
       </Grid>
     </TransitionedPage>

@@ -13,6 +13,8 @@ import {
 import { createClient } from 'graphql-ws';
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { getMainDefinition } from '@apollo/client/utilities';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers';
 
 const httpLink = new HttpLink({
   uri: import.meta.env.VITE_API_URL + '/graphql',
@@ -44,9 +46,11 @@ const client = new ApolloClient({
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
-      <ApolloProvider client={client}>
-        <App />
-      </ApolloProvider>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <ApolloProvider client={client}>
+          <App />
+        </ApolloProvider>
+      </LocalizationProvider>
     </PersistGate>
   </Provider>,
 );

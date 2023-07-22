@@ -17,10 +17,12 @@ export const TransactionDetails = ({
   selectedTransaction,
   selectedAccount,
   handleVanishDetails,
+  handleEditTransaction,
 }: {
   selectedTransaction: Transaction | null;
   selectedAccount: Account | undefined;
   handleVanishDetails: () => void;
+  handleEditTransaction: () => void;
 }) => {
   return (
     <Grid item xs={12} md={5}>
@@ -53,6 +55,7 @@ export const TransactionDetails = ({
                 selectedTransaction={selectedTransaction}
                 selectedAccount={selectedAccount}
                 handleVanishDetails={handleVanishDetails}
+                handleEditTransaction={handleEditTransaction}
               />
             ) : (
               <CardContent
